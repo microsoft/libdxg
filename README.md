@@ -8,12 +8,10 @@ This repository hosts
 
 # Getting Started
 ##	Directory structure
-- /lib/meson.build Meson build files for inclusion using sub-bproject/wrap.
-- /lib/d3dkmt-wsl.cpp - source file for libdxg.so
-- /lib/*.h WDDM header files to install or copy to an include directory
-- /lib/subprojects/DirectX-Headers.warp - Meson dependency for DirectX headers
-- /test/ a test sample, which shows how to use libdxg/
-- /test/subprojects/ Meson dependencies on the DirectX headers and libdxg
+- /meson.build - Meson build files for inclusion using sub-bproject/wrap.
+- /src/d3dkmt-wsl.cpp - source file for libdxg.so
+- /include/*.h WDDM header files to install or copy to an include directory
+- /subprojects/DirectX-Headers.warp - Meson dependency for DirectX headers
 
 ##	Software dependencies
 

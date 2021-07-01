@@ -2,10 +2,12 @@
 *
 * Module Name: d3dkmdt.h
 *
-* Content: Longhorn Display Driver Model (LDDM) kernel mode
+* Content: Windows Display Driver Model (WDDM) kernel mode
 *          data type definitions
 *
-* Copyright (c) 2004 Microsoft Corporation.  All rights reserved.
+* Copyright (c) Microsoft Corporation.
+* Licensed under the MIT License.
+*
 \*****************************************************************************/
 #ifndef _D3DKMDT_H
 #define _D3DKMDT_H

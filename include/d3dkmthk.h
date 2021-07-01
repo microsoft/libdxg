@@ -2,9 +2,11 @@
 *
 * Module Name: d3dkmthk.h
 *
-* Content: longhorn display driver model kernel mode thunk interfaces
+* Content: Windows Display Driver Model (WDDM) kernel mode thunk interfaces
 *
-* Copyright (c) 2003 Microsoft Corporation.  All rights reserved.
+* Copyright (c) Microsoft Corporation.
+* Licensed under the MIT License.
+*
 \*****************************************************************************/
 #ifndef _D3DKMTHK_H_
 #define _D3DKMTHK_H_

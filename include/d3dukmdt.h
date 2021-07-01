@@ -2,10 +2,12 @@
 *
 * Module Name: d3dukmdt.h
 *
-* Content: Longhorn Display Driver Model (LDDM) user/kernel mode
+* Content: Windows Display Driver Model (WDDM) user/kernel mode
 *          shared data type definitions.
 *
-* Copyright (c) 2003 Microsoft Corporation.  All rights reserved.
+* Copyright (c) Microsoft Corporation.
+* Licensed under the MIT License.
+*
 \*******************************************************************************/
 #ifndef _D3DUKMDT_H_
 #define _D3DUKMDT_H_
