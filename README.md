@@ -1,14 +1,35 @@
-# Project
+# Introduction
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
+This repository hosts
+- the official WDDM (Windows Display Driver Model) kernel API headers. These headers are
+ made available under the MIT license rather than the traditional Windows SDK license.
+ - The source of the libdxg shared library for WSL, which translates the WDDM interface calls to the /dev/dxg drive IOCTLs.
+ - a test sample, which shows how to use libdxg in a Meson project.
 
-As the maintainer of this project, please make a few updates:
+# Getting Started
+##	Directory structure
+- /meson.build - Meson build files for inclusion using sub-bproject/wrap.
+- /src/d3dkmt-wsl.cpp - source file for libdxg.so
+- /include/*.h WDDM header files to install or copy to an include directory
+- /subprojects/DirectX-Headers.warp - Meson dependency for DirectX headers
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+##	Software dependencies
+
+The libdxg code depends on uisng wsl/winadapter.h from https://github.com/microsoft/DirectX-Headers
+
+##	API references
+
+The WDDM API is described on MSDN https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/d3dkmthk/
+
+# Ways to consume
+
+- Manually: Just copy the headers somewhere and point your project at them.
+- Meson subproject/wrap: Add this entire project as a subproject of your larger project, and use subproject or dependency to consume it.
+- Pkg-config: Use Meson to build this project, and the resulting installed package can be found via pkg-config.
+
+# Build and Test
+
+Meson build system is used to compile and build the shared library and install header files.
 
 ## Contributing
 
@@ -26,8 +47,8 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 ## Trademarks
 
-This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 
-trademarks or logos is subject to and must follow 
+This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft
+trademarks or logos is subject to and must follow
 [Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
 Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
 Any use of third-party trademarks or logos are subject to those third-party's policies.
