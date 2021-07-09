@@ -4,7 +4,7 @@ This repository hosts
 - the official WDDM (Windows Display Driver Model) kernel API headers. These headers are
  made available under the MIT license rather than the traditional Windows SDK license.
  - The source of the libdxg shared library for WSL, which translates the WDDM interface calls to the /dev/dxg drive IOCTLs.
- - a test sample, which shows how to use libdxg in a Meson project.
+ - a sample project https://github.com/microsoft/libdxgtest, which shows how to use libdxg in a Meson project.
 
 # Getting Started
 ##	Directory structure
