@@ -1,0 +1,1 @@
+option('ndk', type : 'string', value : '', description : 'NDK root directory')

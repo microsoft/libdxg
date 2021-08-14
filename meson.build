@@ -1,10 +1,28 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-project('libdxg', 'cpp', version : '1.0.0',
-  default_options: 'cpp_args=-std=c++17 -Wno-unknown-pragmas')
+project(
+  'libdxg',
+  'cpp',
+  version : '1.0.0'
+  )
+
+ndk = get_option('ndk')
+message('NDK:' + ndk)
+
+cppargs = ['-std=c++17', '-Wno-unknown-pragmas']
+if (ndk != '')
+    cppargs += ['--target=x86_64-linux-android']
+endif
 
 inc_dirs = [include_directories('include', is_system : true)]
+
+if (ndk != '')
+   inc_dirs += ndk + '/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/c++/v1'
+   inc_dirs += ndk + '/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/x86_64-linux-android'
+   inc_dirs += ndk + '/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include'
+endif
+
 install_inc_subdirs = ['dxg']
 
 dep_dxheaders = dependency(
@@ -22,6 +40,7 @@ libdxg = library(
   'src/d3dkmt-wsl.cpp',
   version: '1.0.0',
   include_directories : inc_dirs,
+  cpp_args: cppargs,
   dependencies: [dep_dxheaders])
 
 dep_libdxg = declare_dependency(
