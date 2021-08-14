@@ -31,6 +31,27 @@ The WDDM API is described on MSDN https://docs.microsoft.com/en-us/windows-hardw
 
 Meson build system is used to compile and build the shared library and install header files.
 
+Building using Android NDK:
+````
+export NDK=<path to NDK root directory>
+export HOST_TAG=linux-x86_64
+export NDKSYSROOT=$NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot
+export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
+export TARGET=x86_64-linux-android
+# Set this to your minSdkVersion.
+export API=30
+export AR=$TOOLCHAIN/bin/llvm-ar
+export CC=$TOOLCHAIN/bin/$TARGET$API-clang
+export AS=$CC
+export CXX=$TOOLCHAIN/bin/$TARGET$API-clang++
+export LD=$TOOLCHAIN/bin/ld
+export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
+export STRIP=$TOOLCHAIN/bin/llvm-strip
+
+meson setup build_android --reconfigure --cross-file cross.ini  -Dndk=$NDK -Ddefault_library=static
+ninja -C build_android
+````
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
