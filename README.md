@@ -48,7 +48,7 @@ export LD=$TOOLCHAIN/bin/ld
 export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
 export STRIP=$TOOLCHAIN/bin/llvm-strip
 
-meson setup build_android --reconfigure --cross-file cross.ini  -Dndk=$NDK -Ddefault_library=static
+meson setup build_android --cross-file cross.ini  -Dndk=$NDK -Ddefault_library=static
 ninja -C build_android
 ````
 
