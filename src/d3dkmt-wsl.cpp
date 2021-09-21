@@ -462,7 +462,7 @@ struct D3DDDI_QUERYREGISTRY_INFO_WCHAR16
     D3DDDI_QUERYREGISTRY_STATUS  Status;                 // Out
     union {
         DWORD   OutputDword;                            // Out
-        UINT64  OutputQword;                            // Out
+        D3DKMT_ALIGN64 UINT64  OutputQword;                            // Out
         char16_t   OutputString[1];                     // Out. Dynamic array
         BYTE    OutputBinary[1];                        // Out. Dynamic array
     };
