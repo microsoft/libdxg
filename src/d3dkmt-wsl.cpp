@@ -24,7 +24,7 @@
 
 #define RETURN_IF_NTSTATUS_FAILED(expr) do { NTSTATUS __statusRet = (expr); if (!NT_SUCCESS(__statusRet)) { return __statusRet; }} while (0)
 
-int DxgFd = open("/dev/dxg", O_RDONLY);
+int DxgFd = open("/dev/dxg", O_RDONLY | O_CLOEXEC);
 
 NTSTATUS LinuxErrToNTSTATUS(int err)
 {
@@ -54,6 +54,11 @@ NTSTATUS LinuxErrToNTSTATUS(int err)
         if (DxgFd == -1) \
             return STATUS_UNSUCCESSFUL; \
         int ioctlret = ioctl(DxgFd, _IOWR('G', IoctlId, ARGSSTRUCT), pArgs); \
+        if (ioctlret == -1 && (errno == ENOTTY || errno == EBADF)) { \
+            close(DxgFd); \
+            DxgFd = open("/dev/dxg", O_RDONLY | O_CLOEXEC); \
+            ioctlret = ioctl(DxgFd, _IOWR('G', IoctlId, ARGSSTRUCT), pArgs); \
+        } \
         if (ioctlret == -1) return LinuxErrToNTSTATUS(errno); \
         return ioctlret; \
     }
