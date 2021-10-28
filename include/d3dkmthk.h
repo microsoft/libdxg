@@ -4978,6 +4978,28 @@ typedef struct _D3DKMT_SHAREOBJECTS {
     D3DKMT_PTR(HANDLE*,     pSharedNtHandle);           // out
 } D3DKMT_SHAREOBJECTS;
 
+typedef struct _D3DKMT_SHAREOBJECTWITHHOST
+{
+    D3DKMT_HANDLE           hDevice;                // in
+    D3DKMT_HANDLE           hObject;                // in
+    D3DKMT_ALIGN64 UINT64   Reserved;               // in Must be zero. Reserved for future use
+    D3DKMT_ALIGN64 UINT64   hVailProcessNtHandle;   // out
+} D3DKMT_SHAREOBJECTWITHHOST;
+
+//
+// This API is used to support sync_file in Android.
+// A sync_file is a wrapper around the given monitored fence and the fence value.
+// When a sync_file is created, a wait for sync object on CPU is issued
+// and a file descriptor (FD) it returned to the app. The app can wait on the FD,
+// which will be unblocked when the sync object with this fence value is signaled.
+//
+typedef struct _D3DKMT_CREATESYNCFILE
+{
+	D3DKMT_HANDLE           hDevice;                // in:  Device owner of the monitored fence.
+	D3DKMT_HANDLE           hMonitoredFence;        // in:  Monitored fence object
+	D3DKMT_ALIGN64 UINT64   FenceValue;             // in:  Fence value to wait for
+	D3DKMT_ALIGN64 UINT64   hSyncFile;	            // out: File descriptor on Android or a NT handle on Windows (when implemented)
+} D3DKMT_CREATESYNCFILE;
 
 typedef struct _D3DKMT_TRIMNOTIFICATION
 {
@@ -5625,8 +5647,13 @@ typedef _Check_return_ NTSTATUS (APIENTRY *PFND3DKMT_DISPLAYPORT_OPERATION)(_Ino
 
 typedef _Check_return_ NTSTATUS (APIENTRY *PFND3DKMT_CANCELPRESENTS)(_In_ D3DKMT_CANCEL_PRESENTS*);
 
-
 #endif
+
+EXTERN_C _Check_return_ NTSTATUS APIENTRY D3DKMTShareObjectWithHost(_Inout_ D3DKMT_SHAREOBJECTWITHHOST*);
+EXTERN_C _Check_return_ NTSTATUS APIENTRY D3DKMTCreateSyncFile(_Inout_ D3DKMT_CREATESYNCFILE*);
+
+// Used in WSL to close the internal file descriptor to /dev/dxg
+EXTERN_C VOID APIENTRY D3DKMTCloseDxCoreDevice();
 
 #if !defined(D3DKMDT_SPECIAL_MULTIPLATFORM_TOOL)
 
