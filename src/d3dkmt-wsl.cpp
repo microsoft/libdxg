@@ -14,6 +14,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <uchar.h>
+#include <unistd.h>
+#include <cctype>
 #include <cwchar>
 #include <memory>
 #include <algorithm>
