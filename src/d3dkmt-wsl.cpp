@@ -177,6 +177,21 @@ DEFINE_KMT_NOT_IMPL(PinResources, D3DKMT_PINRESOURCES, NONCONST)
 DEFINE_KMT_NOT_IMPL(UnpinResources, D3DKMT_UNPINRESOURCES, CONST)
 DEFINE_KMT_NO_OP(SetStablePowerState, D3DKMT_SETSTABLEPOWERSTATE, CONST)
 
+VOID LINUX_PUBLIC D3DKMTCloseDxCoreDevice()
+{
+    if (DxgFd != -1)
+    {
+        close(DxgFd);
+        DxgFd = -1;
+    }
+}
+
+// Called when libdxcore is unloaded.
+void __attribute__((destructor)) shutdown()
+{
+    D3DKMTCloseDxCoreDevice();
+}
+
 NTSTATUS LINUX_PUBLIC D3DKMTShareObjects(
     _In_range_(1, D3DKMT_MAX_OBJECTS_PER_HANDLE) UINT   cObjects,
     _In_reads_(cObjects) CONST D3DKMT_HANDLE *          hObjects,
