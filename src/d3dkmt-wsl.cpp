@@ -50,7 +50,7 @@ NTSTATUS LinuxErrToNTSTATUS(int err)
     }
 }
 
-#define DEFINE_KMT(CamelCaseName, ARGSSTRUCT, IoctlId, Constness) \
+#define DEFINE_KMT_WITH_RETRY(CamelCaseName, ARGSSTRUCT, IoctlId, Constness) \
     NTSTATUS APIENTRY LINUX_PUBLIC D3DKMT##CamelCaseName(ARGSSTRUCT Constness * pArgs) \
     { \
         if (DxgFd == -1) \
@@ -61,6 +61,16 @@ NTSTATUS LinuxErrToNTSTATUS(int err)
             DxgFd = open("/dev/dxg", O_RDONLY | O_CLOEXEC); \
             ioctlret = ioctl(DxgFd, _IOWR('G', IoctlId, ARGSSTRUCT), pArgs); \
         } \
+        if (ioctlret == -1) return LinuxErrToNTSTATUS(errno); \
+        return ioctlret; \
+    }
+
+#define DEFINE_KMT(CamelCaseName, ARGSSTRUCT, IoctlId, Constness) \
+    NTSTATUS APIENTRY LINUX_PUBLIC D3DKMT##CamelCaseName(ARGSSTRUCT Constness * pArgs) \
+    { \
+        if (DxgFd == -1) \
+            return STATUS_UNSUCCESSFUL; \
+        int ioctlret = ioctl(DxgFd, _IOWR('G', IoctlId, ARGSSTRUCT), pArgs); \
         if (ioctlret == -1) return LinuxErrToNTSTATUS(errno); \
         return ioctlret; \
     }
@@ -79,7 +89,7 @@ NTSTATUS LinuxErrToNTSTATUS(int err)
 
 // Simple thunks
 // The definitions of these ioctl opcodes come from /onecore/vm/wsl/lxcore/ioctl.h.
-DEFINE_KMT(OpenAdapterFromLuid, D3DKMT_OPENADAPTERFROMLUID, 0x1, CONST)
+DEFINE_KMT_WITH_RETRY(OpenAdapterFromLuid, D3DKMT_OPENADAPTERFROMLUID, 0x1, CONST)
 DEFINE_KMT(CreateDevice, D3DKMT_CREATEDEVICE, 0x2, NONCONST)
 DEFINE_KMT(CreateContext, D3DKMT_CREATECONTEXT, 0x3, NONCONST)
 DEFINE_KMT(CreateContextVirtual, D3DKMT_CREATECONTEXTVIRTUAL, 0x4, NONCONST)
@@ -99,7 +109,7 @@ DEFINE_KMT(SignalSynchronizationObject2, D3DKMT_SIGNALSYNCHRONIZATIONOBJECT2, 0x
 DEFINE_KMT(WaitForSynchronizationObject2, D3DKMT_WAITFORSYNCHRONIZATIONOBJECT2, 0x12, CONST)
 DEFINE_KMT(DestroyAllocation2, D3DKMT_DESTROYALLOCATION2, 0x13, CONST)
 // Note: This is declared const in d3dkmthk.h even though it's modified by dxgkrnl
-DEFINE_KMT(EnumAdapters2, D3DKMT_ENUMADAPTERS2, 0x14, CONST)
+DEFINE_KMT_WITH_RETRY(EnumAdapters2, D3DKMT_ENUMADAPTERS2, 0x14, CONST)
 DEFINE_KMT(CloseAdapter, D3DKMT_CLOSEADAPTER, 0x15, CONST)
 DEFINE_KMT(ChangeVideoMemoryReservation, D3DKMT_CHANGEVIDEOMEMORYRESERVATION, 0x16, CONST)
 DEFINE_KMT(CreateHwContext, D3DKMT_CREATEHWCONTEXT, 0x17, NONCONST)
@@ -140,7 +150,7 @@ DEFINE_KMT(WaitForSynchronizationObjectFromCpu, D3DKMT_WAITFORSYNCHRONIZATIONOBJ
 DEFINE_KMT(WaitForSynchronizationObjectFromGpu, D3DKMT_WAITFORSYNCHRONIZATIONOBJECTFROMGPU, 0x3b, CONST)
 DEFINE_KMT(GetAllocationPriority, D3DKMT_GETALLOCATIONPRIORITY, 0x3c, CONST)
 DEFINE_KMT(QueryClockCalibration, D3DKMT_QUERYCLOCKCALIBRATION, 0x3d, NONCONST)
-DEFINE_KMT(EnumAdapters3, D3DKMT_ENUMADAPTERS3, 0x3e, NONCONST)
+DEFINE_KMT_WITH_RETRY(EnumAdapters3, D3DKMT_ENUMADAPTERS3, 0x3e, NONCONST)
 DEFINE_KMT(ShareObjectsInternal, D3DKMT_SHAREOBJECTS, 0x3f, NONCONST)
 DEFINE_KMT(OpenSyncObjectFromNtHandle2, D3DKMT_OPENSYNCOBJECTFROMNTHANDLE2, 0x40, NONCONST)
 DEFINE_KMT(QueryResourceInfoFromNtHandle, D3DKMT_QUERYRESOURCEINFOFROMNTHANDLE, 0x41, NONCONST)
