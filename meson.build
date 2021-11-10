@@ -41,7 +41,8 @@ libdxg = library(
   version: '1.0.0',
   include_directories : inc_dirs,
   cpp_args: cppargs,
-  dependencies: [dep_dxheaders])
+  dependencies: [dep_dxheaders],
+  install: true)
 
 dep_libdxg = declare_dependency(
     link_with : libdxg,
