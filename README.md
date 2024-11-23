@@ -15,7 +15,7 @@ This repository hosts
 
 ##	Software dependencies
 
-The libdxg code depends on uisng wsl/winadapter.h from https://github.com/microsoft/DirectX-Headers
+The libdxg code depends on using wsl/winadapter.h from https://github.com/microsoft/DirectX-Headers
 
 ##	API references
 
