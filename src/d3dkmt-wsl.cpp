@@ -17,6 +17,7 @@
 #include <unistd.h>
 #include <cctype>
 #include <cwchar>
+#include <array>
 #include <memory>
 #include <algorithm>
 #include <d3dkmthk.h>
