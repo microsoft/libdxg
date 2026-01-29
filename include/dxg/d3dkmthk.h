@@ -11,7 +11,7 @@
 #ifndef _D3DKMTHK_H_
 #define _D3DKMTHK_H_
 
-#include <d3dkmdt.h>
+#include <dxg/d3dkmdt.h>
 
 #pragma region Desktop Family
 #if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)

@@ -20,7 +20,7 @@
 #include <array>
 #include <memory>
 #include <algorithm>
-#include <d3dkmthk.h>
+#include <dxg/d3dkmthk.h>
 #include <errno.h>
 
 #define LINUX_PUBLIC __attribute__((visibility("default")))
