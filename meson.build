@@ -23,16 +23,16 @@ if (ndk != '')
    inc_dirs += ndk + '/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include'
 endif
 
-install_inc_subdirs = ['dxg']
+install_inc_subdirs = ['']
 
 dep_dxheaders = dependency(
   'DirectX-Headers',
   fallback : ['DirectX-Headers', 'dep_dxheaders'])
 
 install_headers(
-  'include/d3dkmthk.h',
-  'include/d3dkmdt.h',
-  'include/d3dukmdt.h',
+  'include/dxg/d3dkmthk.h',
+  'include/dxg/d3dkmdt.h',
+  'include/dxg/d3dukmdt.h',
   subdir : 'dxg')
 
 libdxg = library(

@@ -22,7 +22,7 @@
    #error This header should not be included directly!
 #endif
 
-#include "d3dukmdt.h"
+#include "dxg/d3dukmdt.h"
 
 #define NTSTATUS                int32_t
 
