@@ -1332,6 +1332,7 @@ typedef enum _D3DKMDT_STANDARDALLOCATION_TYPE
 #if (DXGKDDI_INTERFACE_VERSION >= DXGKDDI_INTERFACE_VERSION_WDDM2_1)
     D3DKMDT_STANDARDALLOCATION_VGPU                  = 5,
 #endif // (DXGKDDI_INTERFACE_VERSION >= DXGKDDI_INTERFACE_VERSION_WDDM2_1)
+    D3DKMDT_STANDARDALLOCATION_FENCESTORAGE          = 6,
 } D3DKMDT_STANDARDALLOCATION_TYPE;
 
 #if (DXGKDDI_INTERFACE_VERSION >= DXGKDDI_INTERFACE_VERSION_WIN8)
@@ -1464,6 +1465,12 @@ typedef struct _D3DKMDT_VIRTUALGPUSURFACEDATA
 } D3DKMDT_VIRTUALGPUSURFACEDATA;
 
 #endif // (DXGKDDI_INTERFACE_VERSION >= DXGKDDI_INTERFACE_VERSION_WDDM2_1)
+
+typedef enum _DXGKARG_FENCESTORAGEVALUETYPE
+{
+   D3DKARG_FENCESTORAGETYPE_CURRENTVALUE,
+   D3DKARG_FENCESTORAGETYPE_MONITOREDVALUE,
+} DXGKARG_FENCESTORAGEVALUETYPE;
 
 typedef struct _D3DKMDT_PALETTEDATA
 {
@@ -2005,6 +2012,7 @@ typedef enum
     DXGK_ENGINE_TYPE_COPY,
     DXGK_ENGINE_TYPE_OVERLAY,
     DXGK_ENGINE_TYPE_CRYPTO,
+    DXGK_ENGINE_TYPE_VIDEO_CODEC,
     DXGK_ENGINE_TYPE_MAX
 } DXGK_ENGINE_TYPE;
 
@@ -2022,7 +2030,13 @@ typedef struct _DXGK_NODEMETADATA_FLAGS
 
             UINT RingBufferFenceRelease     :  1;
             UINT SupportTrackedWorkload     :  1;
-            UINT Reserved                   : 13;
+            UINT UserModeSubmission         :  1;
+#if (DXGKDDI_INTERFACE_VERSION >= DXGKDDI_INTERFACE_VERSION_WDDM3_2)
+            UINT SupportBuildTestCommandBuffer :  1;
+            UINT Reserved                   : 11;
+#else
+            UINT Reserved                   : 12;
+#endif // (DXGKDDI_INTERFACE_VERSION >= DXGKDDI_INTERFACE_VERSION_WDDM3_2)
 
             UINT MaxInFlightHwQueueBuffers  : 16;
 
@@ -2238,6 +2252,78 @@ typedef struct _D3DKMT_WDDM_3_0_CAPS
 
 #endif // (DXGKDDI_INTERFACE_VERSION >= DXGKDDI_INTERFACE_VERSION_WDDM3_0)
 
+#if (DXGKDDI_INTERFACE_VERSION >= DXGKDDI_INTERFACE_VERSION_WDDM3_1)
+
+typedef struct _D3DKMT_WDDM_3_1_CAPS
+{
+    union
+    {
+        struct
+        {
+            UINT    NativeGpuFenceSupported :   1;    // Specifies whether native GPU fence is supported by this GPU
+            UINT    Reserved                :  31;
+        };
+        UINT Value;
+    };
+} D3DKMT_WDDM_3_1_CAPS;
+
+#endif // (DXGKDDI_INTERFACE_VERSION >= DXGKDDI_INTERFACE_VERSION_WDDM3_1)
+
+#if (DXGKDDI_INTERFACE_VERSION >= DXGKDDI_INTERFACE_VERSION_WDDM3_2)
+
+typedef enum _DXGK_DISPLAYMUX_DRIVER_SUPPORT_LEVEL
+{
+    DXGK_DISPLAYMUX_DRIVER_SUPPORT_LEVEL_UNINITIALIZED = 0,
+
+    // Indicates driver has no support for MDM
+    DXGK_DISPLAYMUX_DRIVER_SUPPORT_LEVEL_NONE = 1,
+
+    // Indicates the driver has development support for MDM,
+    // quality not considered good enough for development purposes only
+    DXGK_DISPLAYMUX_DRIVER_SUPPORT_LEVEL_DEVELOPMENT = 2,
+
+    // Indicates the driver has experimental support for MDM,
+    // quality not considered good enough for general customer rollout
+    DXGK_DISPLAYMUX_DRIVER_SUPPORT_LEVEL_EXPERIMENTAL = 3,
+
+    // Indicates the driver has full support for MDM,
+    // quality considered good enough for general customer rollout
+    DXGK_DISPLAYMUX_DRIVER_SUPPORT_LEVEL_FULL = 4,
+} DXGK_DISPLAYMUX_SUPPORT_LEVEL, *PDXGK_DISPLAYMUX_SUPPORT_LEVEL;
+
+typedef enum _DXGK_DISPLAYMUX_RUNTIME_STATUS
+{
+    DXGK_DISPLAYMUX_RUNTIME_STATUS_UNINITIALIZED = 0,
+
+    // Indicates the GPU supports MDM and any driver obtained any
+    // required information from the system
+    DXGK_DISPLAYMUX_RUNTIME_STATUS_OK = 1,
+
+    // Indicates the GPU does not support MDM
+    DXGK_DISPLAYMUX_RUNTIME_STATUS_NO_GPU_SUPPORT = 2,
+
+    // Indicates the driver could not obtain some non-critical information
+    // from the system, MDM can still function but user experience may be impacted
+    DXGK_DISPLAYMUX_RUNTIME_STATUS_NON_CRITICAL_SYSTEM_INFO_MISSING = 3,
+
+    // Indicates the driver could not obtain some critical information
+    // from the system, MDM can function without this
+    DXGK_DISPLAYMUX_RUNTIME_STATUS_CRITICAL_SYSTEM_INFO_MISSING = 4,
+} DXGK_DISPLAYMUX_RUNTIME_STATUS, *PDXGK_DISPLAYMUX_RUNTIME_STATUS;
+
+typedef struct _DXGK_DISPLAYMUX_SET_INTERNAL_PANEL_INFO
+{
+    // Indicates if brightness 3 interface was supported by the
+    // GPU the panel was initially connected to at boot
+    BOOLEAN Brightness3Supported;
+
+    // If brightness 3 was supported by the GPU the mux was connected to
+    // then these are the brightness 3 caps and ranges reported
+    DXGK_BRIGHTNESS_CAPS Brightness3Caps;
+    DXGK_BRIGHTNESS_GET_NIT_RANGES_OUT Bridgtness3Ranges;
+} DXGK_DISPLAYMUX_SET_INTERNAL_PANEL_INFO, *PDXGK_DISPLAYMUX_SET_INTERNAL_PANEL_INFO;
+
+#endif // (DXGKDDI_INTERFACE_VERSION >= DXGKDDI_INTERFACE_VERSION_WDDM3_1)
 
 typedef struct _D3DKMT_TRACKEDWORKLOAD_SUPPORT
 {
@@ -2347,7 +2433,8 @@ typedef union _DXGK_MONITORLINKINFO_USAGEHINTS
     struct
     {
         UINT Hidden             : 1;    // 0x00000001
-        UINT Reserved           :31;    // 0xFFFFFFFE
+        UINT HeadMounted        : 1;    // 0x00000002
+        UINT Reserved           :30;    // 0xFFFFFFFC
     };
     UINT Value;
 } DXGK_MONITORLINKINFO_USAGEHINTS, *PDXGK_MONITORLINKINFO_USAGEHINTS;
@@ -2453,7 +2540,8 @@ typedef struct _D3DKMT_DISPLAY_CAPS
         struct
         {
             UINT64 PreferPhysicallyContiguous : 1;
-            UINT64 Reserved : 63;
+            UINT64 CursorScaledWithMultiPlaneOverlayPlane0 : 1;
+            UINT64 Reserved : 62;
         };
         UINT64 Value;
     };
